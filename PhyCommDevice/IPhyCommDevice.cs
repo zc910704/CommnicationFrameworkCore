@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommDeviceCore
+namespace CommDeviceCore.PhysicalCommDevice
 {
-    public interface IPhyCommDevice: IObservable<ILayPackageSendResult>
+    public interface IPhyCommDevice: IDevice
     {
-        public bool Open();
+        public IDeviceConfig DeviceConfig { get; set; }
 
-        public bool Close();
+        public void Open();
+
+        public void Close();
 
         public Task<ILayPackageSendResult> Send(ILayPackage package);
     }

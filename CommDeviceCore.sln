@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicalCommDevice", "LogicalCommDevice\LogicalCommDevice.csproj", "{6AB4614F-A236-490D-855A-41221E7C2844}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicalCommDevice", "LogicalCommDevice\LogicalCommDevice.csproj", "{6AB4614F-A236-490D-855A-41221E7C2844}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhysicalCommDevice", "PhyCommDevice\PhysicalCommDevice.csproj", "{AF1A4C48-BC6B-4945-89F3-5EB6126F614A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhysicalCommDevice", "PhyCommDevice\PhysicalCommDevice.csproj", "{AF1A4C48-BC6B-4945-89F3-5EB6126F614A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{BFE98DFC-2D12-4FAC-9B18-E1AE77948D17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{BFE98DFC-2D12-4FAC-9B18-E1AE77948D17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolManager", "ProtocolManager\ProtocolManager.csproj", "{CD319947-7D4C-47AF-8368-E9EAEBBE1D4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Protocol", "ProtocolManager\Protocol.csproj", "{CD319947-7D4C-47AF-8368-E9EAEBBE1D4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

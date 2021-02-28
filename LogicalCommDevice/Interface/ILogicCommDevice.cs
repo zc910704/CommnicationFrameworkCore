@@ -1,22 +1,26 @@
-﻿using System;
+﻿using CommDeviceCore.PhysicalCommDevice;
+using Common;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CommDeviceCore
+namespace CommDeviceCore.LogicalCommDevice
 {
-    public interface ILogicCommDevice
+    public interface ILogicCommDevice: IDevice
     {
         /// <summary>
         /// 策略模式
         /// </summary>
         public ISendStrategy SendStrategy { get; set; }
 
-        public bool Open();
+        public IPhyCommDevice PhyCommDevice { get; set; }
 
-        public bool Close();
+        public void Open();
 
-        public Task<ILayPackageSendResult> Send(IDeviceCommand cmd);
+        public void Close();
 
-        public Task<ILayPackageSendResult> Send(IList<IDeviceCommand> cmd);
+        public Task<ILayPackageSendResult> Send(IDeviceCommand cmd) => SendStrategy.Send(cmd);
+
+        public Task<ILayPackageSendResult> Send(IList<IDeviceCommand> cmds) => SendStrategy.Send(cmds);
     }
 }
