@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommDeviceCore
 {
-    public interface ILayPackage
+    public interface ILayerPackage
     {
 
     }

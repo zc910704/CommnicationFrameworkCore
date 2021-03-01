@@ -9,10 +9,6 @@ namespace CommDeviceCore.PhysicalCommDevice
     {
         public IDeviceConfig DeviceConfig { get; set; }
 
-        public void Open();
-
-        public void Close();
-
-        public Task<ILayPackageSendResult> Send(ILayPackage package);
+        public Task<ILayPackageSendResult> Send(ILayerPackage package);
     }
 }

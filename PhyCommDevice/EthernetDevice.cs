@@ -7,7 +7,7 @@ namespace CommDeviceCore.PhysicalCommDevice
 {
     public class EthernetDevice : IPhyCommDevice
     {
-        public bool IsOpen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsOpen { get => throw new NotImplementedException(); }
         public IDeviceConfig DeviceConfig { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void Close()
@@ -20,7 +20,7 @@ namespace CommDeviceCore.PhysicalCommDevice
             throw new NotImplementedException();
         }
 
-        public Task<ILayPackageSendResult> Send(ILayPackage package)
+        public Task<ILayPackageSendResult> Send(ILayerPackage package)
         {
             throw new NotImplementedException();
         }

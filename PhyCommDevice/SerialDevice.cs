@@ -8,8 +8,8 @@ namespace CommDeviceCore.PhysicalCommDevice
 {
     public class SerialDevice : IPhyCommDevice
     {
-        public bool IsOpen { get; set; } = false;
         public IDeviceConfig DeviceConfig { get; set; }
+        public bool IsOpen { get => _SerialPort.IsOpen; }
 
         private SerialPort _SerialPort;
 
@@ -33,13 +33,12 @@ namespace CommDeviceCore.PhysicalCommDevice
                     _SerialPort.BaudRate = cfg.BaudRate;
                     _SerialPort.PortName = cfg.PortName;
                     _SerialPort.Open();
-                    IsOpen = true;
                 }
                 else throw new InvalidCastException($"InvalidCast {nameof(DeviceConfig)} to type SerialConfig");
             }
         }
 
-        public Task<ILayPackageSendResult> Send(ILayPackage package)
+        public Task<ILayPackageSendResult> Send(ILayerPackage package)
         {
             if (package == null) throw new ArgumentNullException(nameof(package));
             lock (_LockObject)

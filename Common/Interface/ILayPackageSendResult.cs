@@ -6,6 +6,6 @@ namespace CommDeviceCore
 {
     public interface ILayPackageSendResult
     {
-        public ILayPackage SendPackage { get; set; }
+        public ILayerPackage SendPackage { get; set; }
     }
 }

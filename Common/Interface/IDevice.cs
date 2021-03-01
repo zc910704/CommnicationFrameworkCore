@@ -6,6 +6,10 @@ namespace CommDeviceCore
 {
     public interface IDevice
     {
-        public bool IsOpen { get; set; }
+        public bool IsOpen { get; }
+
+        public void Open();
+
+        public void Close();
     }
 }
