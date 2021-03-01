@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace CommDeviceCore.PhysicalCommDevice
 {
-    public interface IPhyCommDevice: IDevice
+    public interface IPhyCommDevice: IDevice,IDisposable
     {
         public IDeviceConfig DeviceConfig { get; set; }
 
-        public Task<ILayPackageSendResult> Send(ILayerPackage package);
+        public Task<byte[]> Send(byte[] package);
     }
 }

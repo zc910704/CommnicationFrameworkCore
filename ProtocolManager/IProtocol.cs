@@ -5,7 +5,7 @@ using System.Text;
 namespace CommDeviceCore.Protocol
 {
     public interface IProtocol<TIn, TOut>
-        where TIn: ILayerPackage
+        where TIn: ILayerPackable
         where TOut : ILayerPackage
     {
         public TOut Pack(TIn layerPackage);
