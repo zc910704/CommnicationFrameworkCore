@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhysicalCommDevice", "PhyCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{BFE98DFC-2D12-4FAC-9B18-E1AE77948D17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Protocol", "ProtocolManager\Protocol.csproj", "{CD319947-7D4C-47AF-8368-E9EAEBBE1D4B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{BFE98DFC-2D12-4FAC-9B18-E1AE77948D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFE98DFC-2D12-4FAC-9B18-E1AE77948D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFE98DFC-2D12-4FAC-9B18-E1AE77948D17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD319947-7D4C-47AF-8368-E9EAEBBE1D4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD319947-7D4C-47AF-8368-E9EAEBBE1D4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD319947-7D4C-47AF-8368-E9EAEBBE1D4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD319947-7D4C-47AF-8368-E9EAEBBE1D4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
