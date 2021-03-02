@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\ProtocolManager\Protocol.csproj" />
   </ItemGroup>
 
 </Project>

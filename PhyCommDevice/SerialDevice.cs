@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using CommDeviceCore.Protocol;
+using CommDeviceCore.Protocol;
 
 namespace CommDeviceCore.PhysicalCommDevice
 {
@@ -11,9 +14,12 @@ namespace CommDeviceCore.PhysicalCommDevice
         public IDeviceConfig DeviceConfig { get; set; }
         public bool IsOpen { get => _SerialPort.IsOpen; }
 
+        public ITransportLayerProtocol TransportLayerProtocol { get;}
+
         private SerialPort _SerialPort;
 
         private object _LockObject = new object();
+
         private bool disposedValue;
 
         public void Close()
@@ -39,24 +45,52 @@ namespace CommDeviceCore.PhysicalCommDevice
             }
         }
 
-        public Task<byte[]> Send(byte[] content)
+        public async Task<byte[]> Send(byte[] content, CancellationToken cancellationToken)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
-            lock (_LockObject)
+            var jobTask = Task.Run(() => {
+                // Organize critical sections around logical serial port operations somehow.
+                lock (_LockObject)
+                {
+                    return SomeCommand(content);
+                }
+            });
+            if (jobTask != await Task.WhenAny(jobTask, Task.Delay(10, cancellationToken)))
             {
-                return Task.Run(
-                    ()=>
-                    {
-                        if (IsOpen == false) this.Open();
-                        _SerialPort.BaseStream.Write(content, 0, content.Length);
-                        _SerialPort.BaseStream.ReadAsync();
-                    }                    
-                    );
-                
+                //Timeout
             }
+            var response = await jobTask;
+            // Process response.
         }
 
-        #region Dispose
+        private byte[] SomeCommand(byte[] content)
+        {
+            // Assume serial port timeouts are set.
+            _SerialPort.Write(content, 0, content.Length);
+            int offset = 0;
+            int count = TransportLayerProtocol.MiniumResponseLength; // Expected response length.
+            byte[] buffer = new byte[count];
+            while (count > 0)
+            {
+                var readCount = _SerialPort.Read(buffer, offset, count);
+                offset += readCount;
+                count -= readCount;
+            }
+            var countRest = TransportLayerProtocol.GetLengthFromHeader(buffer);
+            byte[] rest = new byte[countRest];
+            while (countRest > 0)
+            {
+                var readCount = _SerialPort.Read(rest, offset, countRest);
+                offset += readCount;
+                countRest -= readCount;
+            }
+            byte[] whole = new byte[countRest + count];
+            Array.Copy(buffer, whole, count);
+            Array.Copy(rest, 0, whole, count, countRest);
+            return whole;
+        }
+
+        #region IDispose
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
