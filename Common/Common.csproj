@@ -6,8 +6,4 @@
     <RootNamespace>CommDeviceCore.Common</RootNamespace>
   </PropertyGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetPath)  $(SolutionDir)\PrivateProtocol\Lib\" />
-  </Target>
-
 </Project>
