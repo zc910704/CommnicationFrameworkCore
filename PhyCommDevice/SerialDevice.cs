@@ -1,11 +1,10 @@
-﻿using System;
+﻿using CommDeviceCore.Common;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CommDeviceCore.Protocol;
-using CommDeviceCore.Protocol;
 
 namespace CommDeviceCore.PhysicalCommDevice
 {
@@ -14,13 +13,18 @@ namespace CommDeviceCore.PhysicalCommDevice
         public IDeviceConfig DeviceConfig { get; set; }
         public bool IsOpen { get => _SerialPort.IsOpen; }
 
-        public ITransportLayerProtocol TransportLayerProtocol { get;}
+        public ITransportLayerProtocol TransportLayerProtocol { get; }
 
         private SerialPort _SerialPort;
 
         private object _LockObject = new object();
 
         private bool disposedValue;
+
+        public SerialDevice(ITransportLayerProtocol transportLayerProtocol)
+        {
+            this.TransportLayerProtocol = transportLayerProtocol;
+        }
 
         public void Close()
         {
@@ -61,6 +65,7 @@ namespace CommDeviceCore.PhysicalCommDevice
             }
             var response = await jobTask;
             // Process response.
+            return response;
         }
 
         private byte[] SomeCommand(byte[] content)

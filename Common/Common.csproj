@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>CommDeviceCore.Common</AssemblyName>
+    <RootNamespace>CommDeviceCore.Common</RootNamespace>
   </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetPath)  $(SolutionDir)\PrivateProtocol\Lib\" />
+  </Target>
 
 </Project>

@@ -1,10 +1,8 @@
-﻿using CommDeviceCore.PhysicalCommDevice;
-using System;
+﻿using CommDeviceCore.Common;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace CommDeviceCore
+namespace CommDeviceCore.Common
 {
     public interface ISendStrategy
     {

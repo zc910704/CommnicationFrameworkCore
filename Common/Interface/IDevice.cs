@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommDeviceCore
+namespace CommDeviceCore.Common
 {
     public interface IDevice
     {

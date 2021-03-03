@@ -1,4 +1,4 @@
-﻿using CommDeviceCore.PhysicalCommDevice;
+﻿using CommDeviceCore.Common;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

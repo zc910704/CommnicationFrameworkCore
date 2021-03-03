@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommDeviceCore.Protocol
+namespace CommDeviceCore.Common
 {
     public interface IProtocol//<TIn, TOut>
         //where TIn: ILayerPackable
