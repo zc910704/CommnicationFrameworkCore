@@ -48,7 +48,8 @@ namespace CommDeviceCore.PhysicalCommDevice
                 else throw new InvalidCastException($"InvalidCast {nameof(DeviceConfig)} to type SerialConfig");
             }
         }
-
+        //串口通信如何处理
+        //https://stackoverflow.com/questions/53335736/c-sharp-await-event-and-timeout-in-serial-port-communication
         public async Task<byte[]> Send(byte[] content, CancellationToken cancellationToken)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
