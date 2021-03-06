@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\LogicalCommDevice\LogicalCommDevice.csproj" />
     <ProjectReference Include="..\PhyCommDevice\PhysicalCommDevice.csproj" />
+    <ProjectReference Include="..\PrivateProtocol\PrivateProtocol.csproj" />
   </ItemGroup>
 
 </Project>

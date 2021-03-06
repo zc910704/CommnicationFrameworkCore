@@ -6,4 +6,8 @@
     <RootNamespace>CommDeviceCore.Common</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Data.HashFunction.CRC" Version="2.0.0" />
+  </ItemGroup>
+
 </Project>
