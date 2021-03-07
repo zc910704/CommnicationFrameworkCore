@@ -8,6 +8,6 @@ namespace CommDeviceCore.Common
     {
         public int MiniumResponseLength { get => 8; }
 
-        public int GetLengthFromHeader(byte[] buff);
+        public int? GetLengthFromHeader(byte[] buff);
     }
 }

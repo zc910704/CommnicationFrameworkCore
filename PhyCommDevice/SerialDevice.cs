@@ -1,4 +1,5 @@
 ﻿using CommDeviceCore.Common;
+using CommDeviceCore.Common.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -15,25 +16,19 @@ namespace CommDeviceCore.PhysicalCommDevice
 
         public ITransportLayerProtocol TransportLayerProtocol { get; }
 
+        public IApplicationLayerProtocol ApplicationLayerProtocol { get; }
+
         private SerialPort _SerialPort;
 
         private object _LockObject = new object();
 
         private bool disposedValue;
 
-        public SerialDevice(ITransportLayerProtocol transportLayerProtocol)
+        public SerialDevice(ITransportLayerProtocol transportLayerProtocol, IApplicationLayerProtocol applicationLayerProtocol)
         {
             this.TransportLayerProtocol = transportLayerProtocol;
+            this.ApplicationLayerProtocol = applicationLayerProtocol;
         }
-
-        public void Close()
-        {
-            if (_SerialPort.IsOpen == true)
-            {
-                _SerialPort.Close();
-            }
-        }
-
         public void Open()
         {
             if (_SerialPort.IsOpen == false)
@@ -48,6 +43,25 @@ namespace CommDeviceCore.PhysicalCommDevice
                 else throw new InvalidCastException($"InvalidCast {nameof(DeviceConfig)} to type SerialConfig");
             }
         }
+
+        public void Close()
+        {
+            if (_SerialPort.IsOpen == true)
+            {
+                _SerialPort.Close();
+            }
+        }
+
+        public async Task<ILayPackageSendResult> Send(IDeviceCommand command, CancellationToken cancellationToken)
+        {
+            var payloadSend = await Task.Run(() => ApplicationLayerProtocol.Pack(command));
+            var payloadResponse = await Send(payloadSend, cancellationToken);
+            var respose = await Task.Run(() => ApplicationLayerProtocol.Unpack(payloadResponse, command));
+            return new LayPackageSendResult(respose, true);
+        }
+
+
+
         //串口通信如何处理
         //https://stackoverflow.com/questions/53335736/c-sharp-await-event-and-timeout-in-serial-port-communication
         public async Task<byte[]> Send(byte[] content, CancellationToken cancellationToken)
@@ -83,16 +97,16 @@ namespace CommDeviceCore.PhysicalCommDevice
                 count -= readCount;
             }
             var countRest = TransportLayerProtocol.GetLengthFromHeader(buffer);
-            byte[] rest = new byte[countRest];
+            byte[] rest = new byte[countRest.Value];
             while (countRest > 0)
             {
-                var readCount = _SerialPort.Read(rest, offset, countRest);
+                var readCount = _SerialPort.Read(rest, offset, countRest.Value);
                 offset += readCount;
                 countRest -= readCount;
             }
-            byte[] whole = new byte[countRest + count];
+            byte[] whole = new byte[countRest.Value + count];
             Array.Copy(buffer, whole, count);
-            Array.Copy(rest, 0, whole, count, countRest);
+            Array.Copy(rest, 0, whole, count, countRest.Value);
             return whole;
         }
 

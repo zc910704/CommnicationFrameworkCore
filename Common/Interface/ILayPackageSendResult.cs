@@ -6,6 +6,8 @@ namespace CommDeviceCore.Common
 {
     public interface ILayPackageSendResult
     {
-        public ILayerPackage SendPackage { get; set; }
+        public IDeviceCommand Command { get; set; }
+
+        public bool Status { get; set; }
     }
 }
