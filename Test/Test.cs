@@ -1,10 +1,41 @@
-﻿using CommDeviceCore.PrivateProtocol;
+﻿using CommDeviceCore.LogicalCommDevice;
+using CommDeviceCore.PrivateProtocol;
 using CommDeviceCore.PhysicalCommDevice;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using CommDeviceCore.Common.Utils;
+using System.Threading;
+
+namespace CommDeviceCore.LogicalCommDevice.Tests
+{
+    public class Test
+    {
+        [Fact()]
+        public async void OpenTest()
+        {
+            WayeeTransportProtocol transProtocol = new ();
+            WayeeApplicationProtocol appProtocol = WayeeApplicationProtocol.Convert(@"D:\Device.xml");
+            SerialDevice device = new(transProtocol, appProtocol);
+            device.DeviceConfig = new SerialConfig() { PortName = "COM9", BaudRate = 9600 };
+            device.Open();
+            DirectSendStrategy directSend = new(device);
+            ILogicCommDevice logicalCommDevice = new LogicalCommDevice(device, directSend);
+            DateTime start = DateTime.Now;
+            for (int i = 0; i < 10000; i++)
+            {
+                var cmd = appProtocol.Commands[0];
+                CancellationTokenSource cts = new CancellationTokenSource();
+                var res = await logicalCommDevice.Send(cmd, cts.Token);
+                Assert.True(res.Status);
+            }
+            DateTime stop = DateTime.Now;
+            var span = stop - start;
+            var all = span.TotalSeconds;
+        }
+    }
+}
 
 namespace CommDeviceCore.PrivateProtocol.Tests
 {

@@ -28,5 +28,6 @@ namespace CommDeviceCore.LogicalCommDevice
         {
             PhyCommDevice.Close();
         }
+
     }
 }

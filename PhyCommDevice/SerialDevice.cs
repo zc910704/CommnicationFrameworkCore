@@ -18,17 +18,22 @@ namespace CommDeviceCore.PhysicalCommDevice
 
         public IApplicationLayerProtocol ApplicationLayerProtocol { get; }
 
-        private SerialPort _SerialPort;
+        private SerialPort _SerialPort = new SerialPort();
 
         private object _LockObject = new object();
 
         private bool disposedValue;
 
+        private List<byte> _Buffers = new List<byte>();
+
         public SerialDevice(ITransportLayerProtocol transportLayerProtocol, IApplicationLayerProtocol applicationLayerProtocol)
         {
             this.TransportLayerProtocol = transportLayerProtocol;
             this.ApplicationLayerProtocol = applicationLayerProtocol;
+            _SerialPort.ReadTimeout = 500;
+            _SerialPort.WriteTimeout = 500;
         }
+
         public void Open()
         {
             if (_SerialPort.IsOpen == false)
@@ -55,8 +60,10 @@ namespace CommDeviceCore.PhysicalCommDevice
         public async Task<ILayPackageSendResult> Send(IDeviceCommand command, CancellationToken cancellationToken)
         {
             var payloadSend = await Task.Run(() => ApplicationLayerProtocol.Pack(command));
-            var payloadResponse = await Send(payloadSend, cancellationToken);
-            var respose = await Task.Run(() => ApplicationLayerProtocol.Unpack(payloadResponse, command));
+            var sendload = await Task.Run(() => TransportLayerProtocol.Pack(payloadSend));
+            var payloadResponse = await Send(sendload, cancellationToken);
+            var receiveload = await Task.Run(() => TransportLayerProtocol.Unpack(payloadResponse));
+            var respose = await Task.Run(() => ApplicationLayerProtocol.Unpack(receiveload, command));
             return new LayPackageSendResult(respose, true);
         }
 
@@ -83,31 +90,45 @@ namespace CommDeviceCore.PhysicalCommDevice
             return response;
         }
 
-        private byte[] SomeCommand(byte[] content)
+        private async Task<byte[]> SomeCommand(byte[] content)
         {
-            // Assume serial port timeouts are set.
-            _SerialPort.Write(content, 0, content.Length);
-            int offset = 0;
-            int count = TransportLayerProtocol.MiniumResponseLength; // Expected response length.
-            byte[] buffer = new byte[count];
-            while (count > 0)
+            try
             {
-                var readCount = _SerialPort.Read(buffer, offset, count);
-                offset += readCount;
-                count -= readCount;
+                Task writeTask = new Task(() => _SerialPort.Write(content, 0, content.Length));
+
+                int offset = 0;
+                int count = TransportLayerProtocol.MiniumResponseLength; // Expected response length.
+                byte[] header = new byte[count];
+                Task readTask = new Task(
+                    () =>
+                    {
+                        while (count > 0)
+                        {
+                            var readCount = _SerialPort.BaseStream.Read(header, offset, count);
+                            offset += readCount;
+                            count -= readCount;
+                        }
+                    }
+                 );
+                readTask.Start();
+                writeTask.Start();
+                await readTask;
+                var countRest = TransportLayerProtocol.GetLengthFromHeader(header);
+                byte[] rest = new byte[countRest.Value];
+                var offsetRest = 0;
+                while (countRest > 0)
+                {
+                    var readCount = _SerialPort.BaseStream.Read(rest, offsetRest, countRest.Value);
+                    offsetRest += readCount;
+                    countRest -= readCount;
+                }
+                byte[] whole = new byte[rest.Length + header.Length];
+                Array.Copy(header, whole, header.Length);
+                Array.Copy(rest, 0, whole, header.Length, rest.Length);
+                return whole;
             }
-            var countRest = TransportLayerProtocol.GetLengthFromHeader(buffer);
-            byte[] rest = new byte[countRest.Value];
-            while (countRest > 0)
-            {
-                var readCount = _SerialPort.Read(rest, offset, countRest.Value);
-                offset += readCount;
-                countRest -= readCount;
-            }
-            byte[] whole = new byte[countRest.Value + count];
-            Array.Copy(buffer, whole, count);
-            Array.Copy(rest, 0, whole, count, countRest.Value);
-            return whole;
+            catch (Exception ex) { }
+            throw new NotSupportedException();
         }
 
         #region IDispose
