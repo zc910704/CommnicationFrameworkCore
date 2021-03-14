@@ -63,8 +63,8 @@ namespace CommDeviceCore.PhysicalCommDevice
             var sendload = await Task.Run(() => TransportLayerProtocol.Pack(payloadSend));
             var payloadResponse = await Send(sendload, cancellationToken);
             var receiveload = await Task.Run(() => TransportLayerProtocol.Unpack(payloadResponse));
-            var respose = await Task.Run(() => ApplicationLayerProtocol.Unpack(receiveload, command));
-            return new LayPackageSendResult(respose, true);
+            _ = Task.Run(() => ApplicationLayerProtocol.Unpack(receiveload, command));
+            return new LayPackageSendResult(command, true);
         }
 
 
@@ -94,25 +94,42 @@ namespace CommDeviceCore.PhysicalCommDevice
         {
             try
             {
-                Task writeTask = new Task(() => _SerialPort.Write(content, 0, content.Length));
+                #region 实现方式1
+                //Task writeTask = new Task(() => _SerialPort.Write(content, 0, content.Length));
+                //int offset = 0;
+                //int count = TransportLayerProtocol.MiniumResponseLength; // Expected response length.
+                //byte[] header = new byte[count];
+                //Task readTask = new Task(
+                //    () =>
+                //    {
+                //        while (count > 0)
+                //        {
+                //            var readCount = _SerialPort.BaseStream.Read(header, offset, count);
+                //            offset += readCount;
+                //            count -= readCount;
+                //        }
+                //    }
+                // );
+                //readTask.Start();
+                //writeTask.Start();
+                //await readTask;
+                #endregion
 
+                #region 实现方式2
+                _SerialPort.Write(content, 0, content.Length);
                 int offset = 0;
                 int count = TransportLayerProtocol.MiniumResponseLength; // Expected response length.
                 byte[] header = new byte[count];
-                Task readTask = new Task(
-                    () =>
+                await Task.Run(() =>
+                {
+                    while (count > 0)
                     {
-                        while (count > 0)
-                        {
-                            var readCount = _SerialPort.BaseStream.Read(header, offset, count);
-                            offset += readCount;
-                            count -= readCount;
-                        }
+                        var readCount = _SerialPort.BaseStream.Read(header, offset, count);
+                        offset += readCount;
+                        count -= readCount;
                     }
-                 );
-                readTask.Start();
-                writeTask.Start();
-                await readTask;
+                });
+                #endregion
                 var countRest = TransportLayerProtocol.GetLengthFromHeader(header);
                 byte[] rest = new byte[countRest.Value];
                 var offsetRest = 0;
@@ -140,10 +157,10 @@ namespace CommDeviceCore.PhysicalCommDevice
                 {
                     // TODO: 释放托管状态(托管对象)
                 }
-
                 // TODO: 释放未托管的资源(未托管的对象)并替代终结器
                 // TODO: 将大型字段设置为 null
                 disposedValue = true;
+                _SerialPort.Close();
             }
         }
 
