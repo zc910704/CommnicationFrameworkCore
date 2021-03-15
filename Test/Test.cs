@@ -29,6 +29,7 @@ namespace CommDeviceCore.LogicalCommDevice.Tests
                 CancellationTokenSource cts = new CancellationTokenSource();
                 var res = await logicalCommDevice.Send(cmd, cts.Token);
                 Assert.True(res.Status);
+                //logicalCommDevice.Send(cmd, cts.Token);
             }
             DateTime stop = DateTime.Now;
             var span = stop - start;
